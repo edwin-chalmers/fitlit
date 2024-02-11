@@ -1,12 +1,24 @@
-//import userData from './data/users.js';
-//import hydration from './data/hydration.js';
-import { generateRandomUser, getAverageDailyFluidOunces, getSpecificDay, getWeeklyFluidOunces, randomUser, account, hydration, sleep, activity, } from './scripts'
+import { account, hydration, sleep, activity, fetchData } from './scripts'
 import { Chart, registerables } from 'chart.js/auto';
 import { stepChart, wklyHydChart, hydChart } from './chartSetup'
 Chart.register(...registerables);
 
 
-function setupEventListeners() {
+function setupEventListeners(randomUser) {
+  window.addEventListener("load", () => {
+    displayWelcomeMessage(randomUser);
+    displayStepGoal(randomUser);
+    updateAccountName(randomUser);
+    updateAccountAddress(randomUser);
+    updateAccountEmail(randomUser);
+    updateAccountStride(randomUser);
+    updateAccountStep(randomUser);
+    updateAccountFriends(randomUser);
+    displaySpecificDayOunces(randomUser.id);
+    const averageOunces = getAverageDailyFluidOunces(randomUser.id); 
+    displayAverageDailyOunces(averageOunces);
+    updateChart(randomUser, userData.users);
+  });
 
   document.querySelector('.nav-bar').addEventListener('click', (e) => {
     if(!e.target.classList.contains('home-button')){
@@ -19,35 +31,12 @@ function setupEventListeners() {
       }, 250);
     }
   }) 
-  window.onload = function () {
-    //console.log('sfsjf', randomUser)
-    // const randomUser = generateRandomUser();
-    // display the average daily fluid ounces for the loaded user
-    displayWelcomeMessage(randomUser);
-    displayStepGoal(randomUser);
-    updateAccountName(randomUser);
-    updateAccountAddress(randomUser);
-    updateAccountEmail(randomUser);
-    updateAccountStride(randomUser);
-    updateAccountStep(randomUser);
-    updateAccountFriends(randomUser);
-    displaySpecificDayOunces(randomUser.id);//fetch and display
-    //displayWeeklyHydration(randomUser.id);//fetch and display
-  
-    const averageOunces = getAverageDailyFluidOunces(randomUser.id); 
-    displayAverageDailyOunces(averageOunces);
-    // const mostRecentOunces = 
-  
-    // ipdate the chart with initial data
-    updateChart(randomUser, userData.users); // You might need to implement or adjust this function based on your setup
-  };
 }
-
 
 // DOM update functions
 function displayWelcomeMessage(user) {
+  console.log(user)
   const welcomeMessageElement = document.querySelector('.welcome-message');
-  console.log(user.name)
   welcomeMessageElement.textContent = `Welcome back, ${user.name.split(' ')[0]}!`;
 }
 
@@ -105,7 +94,7 @@ function updateAccountFriends(user) {
 
 function friendIdsToNames(user) {
   var friendArr = user.friends
-  var friendNames = userData.users.reduce((acc, account) => {
+  var friendNames = user.users.reduce((acc, account) => {
     if (friendArr.includes(account.id)) {
       acc.push(account.name)
     }
@@ -126,42 +115,10 @@ function displaySpecificDayOunces(userId) {
 
 // function to display weekly hydration data for the random user
 function displayWeeklyHydration(userId) {
-  console.log(userId)
   const weeklyData = getWeeklyFluidOunces(userId);
   return weeklyData.map((day) => day.numOunces)
 }
 
-/*function handleFetchedData(randomUser, account, hydration, sleep, activity) {
-  
- const randomuser = generateRandomUser(account);//
- displayWelcomeMessage(randomUser)
- displayStepGoal(randomUser)
-} */
-
-// Event listener setup function
-
-
-/*function handleFetchedData(account, hydration, sleep, activity) {
-  // Here, use the fetched data to call your display/update functions
-  // For example, if you have a function to display user info:
-  const randomUser = generateRandomUser(account); // Assuming generateRandomUser is defined and properly imports 'account' data
-  displayWelcomeMessage(randomUser);
-  displayStepGoal(randomUser);
-  updateAccountName(randomUser);
-  updateAccountAddress(randomUser);
-  updateAccountEmail(randomUser);
-  updateAccountStride(randomUser);
-  updateAccountStep(randomUser);
-  updateAccountFriends(randomUser);
-  // Call more functions as needed with the appropriate data
-} */
-
-
-
-
-
-
-// function to update the chart with the user's step goal and the average step goal from chatgpt
 function updateChart(randomUser, allUsers) {
   const averageStepGoal = getAverageStepGoal(allUsers);
   compareStepGoalToAverage(averageStepGoal);
@@ -183,11 +140,10 @@ function updateChart(randomUser, allUsers) {
   stepChart.update();
 }
 
-// setupEventListeners();
+ setupEventListeners();
 
 
 export {
-  displayWelcomeMessage,
   displayStepGoal,
   compareStepGoalToAverage,
   updateAccountName,
@@ -196,10 +152,5 @@ export {
   updateAccountStride,
   updateAccountStep,
   updateAccountFriends,
-  displayAverageDailyOunces,
-  displaySpecificDayOunces,
-  displayWeeklyHydration,
-  setupEventListeners,
-  //handleFetchedData,
-
+  setupEventListeners
 };

@@ -1,50 +1,13 @@
 // Your fetch requests will live here!
 
-// ----- * User Data * ----- //
-// function fetchUser() {
-//     fetch('https://fitlit-api.herokuapp.com/api/v1/users')
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error('Network response was not ok');
-//             }
-//             return response.json();
-//         })
-//         .then(data => {
-//           console.log('>>>>>DATA', data);
-//             return data;
-//             // Process the data here
-//         })
-//         .catch(error => {
-//             //console.error('There has been a problem with your fetch operation:', error);
-//         });
-//         console.log('>>>>>USER', user);  
-// }
-
-
-
-
-// .then(data => {
-// // Assuming `data` is an array of user objects
-// const processedData = data.map(user => ({
-//     id: user.id,
-//     name: user.name,
-//     address: user.address,
-//     email: user.email,
-//     strideLength: user.strideLength,
-//     dailyStepGoal: user.dailyStepGoal,
-//     friends: user.friends
-// }));
-
-
-console.log('I will be a fetch request!')
 
 function fetchData(endpoint) {
     return fetch(`https://fitlit-api.herokuapp.com/api/v1/${endpoint}`)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${endpoint}`);
-        }
         return response.json();
+      })
+      .then((data) => {
+        return data
       })
       .catch((error) => console.log(`Error fetching ${endpoint}:`, error));
   }

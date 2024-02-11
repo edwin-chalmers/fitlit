@@ -1,11 +1,11 @@
 import './css/styles.css';
 import './images/fitlit-logo.png';
 import './images/white-texture.png';
-import { displayWelcomeMessage, displayAverageDailyOunces, displaySpecificDayOunces, displayWeeklyHydration, setupEventListeners } from './domUpdates';
+import {  displayStepGoal, compareStepGoalToAverage, updateAccountName, updateAccountAddress, updateAccountEmail, updateAccountStride, updateAccountStep, updateAccountFriends, setupEventListeners} from './domUpdates'
 import { fetchUserData, fetchHydrationData, fetchSleepData, fetchActivityData } from './apiCalls';
 
-let account, hydration, sleep, activity, randomUser;
-
+let randomUser, account, hydration, sleep, activity, averageStepGoal;
+fetchData()
 function fetchData() {
   Promise.all([
     fetchUserData(),
@@ -13,40 +13,18 @@ function fetchData() {
     fetchSleepData(),
     fetchActivityData(),
   ])
-  .then(([userData, hydrationData, sleepData, activityData]) => {
-    account = userData;
-    hydration = hydrationData;
-    sleep = sleepData;
-    activity = activityData;
-
-
-    //call the handler in domUpdates
-    //handleFetchedData(randomUser, account, hydration, sleep, activity);
-
-    let randomUser = generateRandomUser();
-    console.log('Random user data:', randomUser);
-
-    displayWelcomeMessage(randomUser);
-    const averageOunces = getAverageDailyFluidOunces(randomUser.id);
-    displayAverageDailyOunces(averageOunces);
-
-    const mostRecentOunces = getSpecificDay(randomUser.id);
-    displaySpecificDayOunces(mostRecentOunces);
-
-    const weeklyHydrationData = getWeeklyFluidOunces(randomUser.id);
-    displayWeeklyHydration(weeklyHydrationData);
-
-    // setupEventListeners()
+  .then(([account, hydration, sleep, activity]) => {
+    randomUser = generateRandomUser(account)
+      setupEventListeners(randomUser)
   })
   .catch(error => console.error("Error loading data:", error));
 }
 
-function generateRandomUser() {
+function generateRandomUser(account) {
   const randomIndex = Math.floor(Math.random() * account.users.length);
   return account.users[randomIndex];
 }
-
-function getAverageStepGoal() {
+function getAverageStepGoal(user) {
   const totalStepsGoal = account.users.reduce((total, user) => total + user.dailyStepGoal, 0);
   return totalStepsGoal / account.users.length;
 }
@@ -74,6 +52,5 @@ function getWeeklyFluidOunces(userId) {
 
 }
 
-document.addEventListener('DOMContentLoaded', fetchData);
-
-export { generateRandomUser, getAverageStepGoal, getAverageDailyFluidOunces, getSpecificDay, getWeeklyFluidOunces, randomUser, account, hydration, sleep, activity };
+console.log(randomUser, averageStepGoal)
+export { randomUser, account, hydration, sleep, activity, averageStepGoal, fetchData};
