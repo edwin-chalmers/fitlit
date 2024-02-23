@@ -59,6 +59,11 @@
             <canvas id="hydChart"></canvas>
           <p>Weekly Hydration Data (oz)</p>
             <canvas id="wklyHydChart"></canvas>
+            <div id="hydrationInputContainer">
+              <input type="date" id="hydrationDate" placeholder="YYYY/MM/DD" required>
+              <input type="number" id="hydrationAmount" placeholder="Ounces" required>
+              <button id="submitHydrationData">Submit Hydration Data</button>
+            </div>
         </div>
       </section>
       <section class="sleep-main info-card  draggable" draggable="true" id="sleepCard">
@@ -106,6 +111,12 @@
         <option class="draggable chartOpt" draggable="true" id="chartOptSleep" value="sleep">sleep</option>
         <option class="draggable chartOpt" draggable="true" id="chartOptHydration" value="hydration">hydration</option>
         <option class="draggable chartOpt" draggable="true" id="chartOptActivity"  value="activity">activity</option>
+   <!-- <option class="draggable chartOpt" draggable="true" id="chartOptAllSleepHours" value="allSleepHours">Average Sleep Hours</option>
+        <option class="draggable chartOpt" draggable="true" id="chartOptAllSleepQuality" value="allSleepQuality">Average Sleep Quality</option>
+        <option class="draggable chartOpt" draggable="true" id="chartOptAllNumOunces" value="allNumOunces">Average Num Ounces of Water Drank</option>
+        <option class="draggable chartOpt" draggable="true" id="chartOptAllMinsActive" value="allMinsActive">Average Minutes Active</option>
+        <option class="draggable chartOpt" draggable="true" id="chartOptAllFlightsOfStepsTraveled" value="allFlightsOfStepsTraveled">Avg Flights of Steps or Whatever this is</option> -->
+</section>
       </section>
       <section class="chartUpdate options">
       </section>

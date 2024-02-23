@@ -2,7 +2,7 @@ import './css/styles.css';
 import './images/fitlit-logo.png';
 import './images/white-texture.png';
 import { setupEventListeners, sleepChartUpdate } from './domUpdates';
-import { fetchUserData, fetchHydrationData, fetchSleepData, fetchActivityData } from './apiCalls';
+import { fetchUserData, fetchHydrationData, fetchSleepData, fetchActivityData, postHydrationData } from './apiCalls';
 
 
 let appState = {
@@ -171,6 +171,25 @@ function getWeeklySleepQuality(selectedWeek) {
           return selectedWeek[0].map(day => day[sleepDataType])
         }
 
+
+function getTotalAverageSleepData(sleepData, propertyName) {
+  const total = sleepData.reduce((sum, record) => sum + record[propertyName], 0);
+  const average = total / sleepData.length;
+  return average.toFixed(2);
+}
+
+function getTotalAverageNumOunces() {
+  const totalAvgOunces = appState.hydration.hydrationData.reduce((total, record) => total + record.numOunces, 0);
+  return (totalAvgOunces / appState.hydration.hydrationData.length).toFixed(2);
+}
+
+function getTotalAverageActivityData(activityData, propertyName) {
+  const total = activityData.reduce((sum, record) => sum + record[propertyName], 0);
+  const average = total / activityData.length;
+  return average.toFixed(2);
+}
+
+
 document.addEventListener('DOMContentLoaded', fetchData);
 
 document.getElementById('date-selector').addEventListener('change', function (event) {
@@ -194,6 +213,19 @@ document.querySelector('.condMode').addEventListener('click', () => {
   document.querySelector('#top').classList.toggle('condensed')
 })
 
+//el for hydration POST
+document.getElementById('submitHydrationData').addEventListener('click', () => {
+  const date = document.getElementById('hydrationDate').value;
+  const numOunces = parseInt(document.getElementById('hydrationAmount').value, 10);
+
+  if (!date || isNaN(numOunces)) {
+    alert('Please fill in both fields correctly.');//minds blanking on how to do this w/o an alert
+    return;
+  }
+
+  postHydrationData(randomUser.id, date, numOunces)
+});
+
 export {
   appState,
   getAccountFriends,
@@ -207,5 +239,8 @@ export {
   getMostRecentSleepQuality,
   getWeeklySleep,
   getWeeklySleepHours,
-  getWeeklySleepQuality
+  getWeeklySleepQuality,
+  getTotalAverageSleepData,
+  getTotalAverageNumOunces,
+  getTotalAverageActivityData
 };

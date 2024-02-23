@@ -8,10 +8,13 @@ import {
   getWeeklySleep,
   getAverageSleepQuality,
   getMostRecentSleepHours,
-  getMostRecentSleepQuality
+  getMostRecentSleepQuality,
+  getTotalAverageSleepData,
+  getTotalAverageNumOunces,
+  getTotalAverageActivityData
 } from './scripts'
 import { Chart, registerables } from 'chart.js/auto';
-import { stepChart, wklyHydChart, hydChart, avgSleepChart, sleepChart, wklySleepChart, setCharts } from './chartSetup'
+import { stepChart, wklyHydChart, hydChart, avgSleepChart, sleepChart, wklySleepChart, setCharts, adminChart } from './chartSetup'
 Chart.register(...registerables);
 
 function setupEventListeners(randomUser, allUsers) {
@@ -35,6 +38,9 @@ function setupEventListeners(randomUser, allUsers) {
   const viewMenu = document.querySelector('.viewMenu')
   const adminPanel = document.querySelector('.adminControls')
   const adminView = document.querySelector('.adminView')
+  const chartOptions = document.querySelector('.chartOptions'); //add these to target the sections
+  const chartUpdateSection = document.querySelector('.chartUpdate')
+  
 
   adminView.addEventListener('click', () => {
     adminPanel.classList.toggle('collapsed')
@@ -42,7 +48,7 @@ function setupEventListeners(randomUser, allUsers) {
   })
 
   const sortContainer = document.querySelector('.sortContainer');
-  const chartOptions = document.querySelector('.chartUpdate');
+  //const chartOptions = document.querySelector('.chartUpdate');  //moved this up
 
   // Function to handle drag start event
   function handleDragStart(event) {
@@ -54,23 +60,33 @@ function setupEventListeners(randomUser, allUsers) {
       event.preventDefault();
   }
 
-  // Function to handle drop event
+  // Function to handle drop event - refactored 
   function handleDrop(event) {
-      event.preventDefault();
-      const draggableElementId = event.dataTransfer.getData('text/plain');
-      const draggableElement = document.getElementById(draggableElementId);
-      if(draggableElement.classList.contains('chartOpt')){
-        chartOptions.appendChild(draggableElement)
+    event.preventDefault();
+    const draggableElementId = event.dataTransfer.getData('text/plain');
+    const draggableElement = document.getElementById(draggableElementId);
+    const target = event.target;
+
+    if(draggableElement.classList.contains('chartOpt')){
+      if (target === chartUpdateSection || chartUpdateSection.contains(target)) { //this checks if dropped in the chartUpdateSection
+        chartUpdateSection.appendChild(draggableElement);
+        adminChartUpdate(draggableElement.id); //call to update the admin chart - we need to flesh out logic for this
       } else {
-        sortContainer.appendChild(draggableElement);
-      }   
-  }
+        chartOptions.appendChild(draggableElement);
+      }
+    } else {
+      sortContainer.appendChild(draggableElement);
+    }   
+}
+  
 
   // Add event listeners to the sort container
   sortContainer.addEventListener('dragover', handleDragOver);
   sortContainer.addEventListener('drop', handleDrop);
   chartOptions.addEventListener('dragover', handleDragOver);
   chartOptions.addEventListener('drop', handleDrop);
+  chartUpdateSection.addEventListener('drop', handleDrop); // Added
+
 
   // Add event listeners to draggable elements
   const draggableElements = document.querySelectorAll('.draggable');
@@ -251,6 +267,19 @@ function sleepChartUpdate(randomUser, allUsers) {
   avgSleepChart.update();
   sleepChart.update();
   wklySleepChart.update();
+}
+
+//ill give this a shot
+function adminChartUpdate() {
+  const totalAverageSleep = getTotalAverageSleepData()
+  const totalAverageHydration = getTotalAverageNumOunces()
+  const totalAverageActivity = getTotalAverageActivityData()
+  
+  adminChart.data.datasets[0].data = [] //needs to be set
+  adminChart.options.scales.x.ticks.max = Math.max() + 10; //same here. outside of numsteps, it seems like minutesactive goes to the highest number
+
+  adminChart.update();
+
 }
 
 export {
